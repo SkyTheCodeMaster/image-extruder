@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Python interpreter
-PYTHON="python3.11"
+PYTHON="python3.13"
 VENV_PATH="venv"
 
 # Build a new venv from the requirements files.

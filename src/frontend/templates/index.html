@@ -3,24 +3,64 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generic Template</title>
+    <title>PNG Extruder</title>
     <link rel="stylesheet" href="/css/vendored/bulma.min.css">
+    <link rel="stylesheet" href="/css/vendored/bulma-slider.min.css">
     <script src="/js/index.js" async type="module"></script>
+    <script src="/js/vendored/bulma-slider.js" async></script>
   </head>
   <body>
     <script id="replace_with_navbar" src="/js/nav.js" type="module"></script>
-    <div class="tile is-ancestor m-4">
-      <div class="tile" style="height:fit-content">
-        <div class="box">
-          <h1 class="title">Generic Webpage</h1>
-          <p>Placeholder text here</p>
+    <div class="columns m-6">
+      <div class="column"></div>
+      <div class="column is-narrow">
+        <div class="box has-text-centered" style="width: fit-content;">
+          <div class="field">
+            <h1 class="title">PNG Extruder</h1>
+            <p>Upload a PNG, and get it back as an STL.</p>
+          </div>
+          <div class="field is-flex-direction-row box level">
+            <p style="width: 20%;">Width (X)<br>(in mm)</p>
+            <input class="slider" step="2" min="2" max="200" id="slider_x" value="100" type="range" style="width: 50%;">
+            <input class="input" type="text" placeholder="Size in mm" id="input_x" value="100" style="width: 20%;">
+          </div>
+          <div class="field is-flex-direction-row box level">
+            <p style="width: 20%;">Length (Y)<br>(in mm)</p>
+            <input class="slider" step="2" min="2" max="200" id="slider_y" value="100" type="range" style="width: 50%;">
+            <input class="input" type="text" placeholder="Size in mm" id="input_y" value="100" style="width: 20%;">
+          </div>
+          <div class="field is-flex-direction-row box level">
+            <p style="width: 20%;">Height (Z)<br>(in mm)</p>
+            <input class="slider" step="3.175" min="3.175" max="50.8" id="slider_z" value="6.35" type="range" style="width: 50%;">
+            <input class="input" type="text" placeholder="Size in mm" id="input_z" value="6.35" style="width: 20%;">
+          </div>
+          <div class="field columns">
+            <div class="column"></div>
+            <div class="column is-narrow">
+              <div class="box file is-boxed has-name">
+                <label class="file-label">
+                  <input class="file-input" type="file" name="resume" accept=".png" id="file_picker" />
+                  <span class="file-cta">
+                    <span class="file-label"> Choose a file… </span>
+                  </span>
+                  <span class="file-name" id="file_name" data-text="{0}">Filename</span>
+                </label>
+              </div>
+            </div>
+            <div class="column"></div>
+          </div>
+          <div class="field">
+            <div id="image_preview"></div>
+          </div>
+          <div class="field">
+            <button class="button is-success" id="button_stl">Extrude to STL</button>
+          </div>
+          <div class="field">
+            <button class="button is-success" id="button_svg">Convert to SVG</button>
+          </div>
         </div>
       </div>
-      <div class="tile" style="height:fit-content">
-        <div class="box">
-          <h1 class="title" id="db_size">The database is: {0}</h1>
-        </div>
-      </div>
+      <div class="column"></div>
     </div>
     <div style="position:absolute;height:fit-content;bottom:0;width:100%;">
       <div id="replace_with_footer"></div>

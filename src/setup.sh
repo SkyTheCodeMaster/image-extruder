@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Service file details
-DESCRIPTION="Webserver running Stable Diffusion"
-SERVICE_NAME="diffusionai"
+DESCRIPTION="Webserver that extrudes PNGs to a desired thickness"
+SERVICE_NAME="image_extruder"
 
 # Python interpreter
-PYTHON="python3.11"
+PYTHON="python3.13"
 MAIN_FILE="main.py"
 VENV_PATH="venv"
 
