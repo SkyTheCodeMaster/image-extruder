@@ -251,7 +251,7 @@ module combined_model() {
 """
   
   for model in models:
-    script += f"part_{model['colour']}_{model.get("id","default")}();\n"
+    script += f"part_{model['colour']}_{model.get('id','default')}();\n"
   
   script += """}
 
