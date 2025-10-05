@@ -11,15 +11,29 @@
   </head>
   <body>
     <script id="replace_with_navbar" src="/js/nav.js" type="module"></script>
-    <div class="columns m-6">
-      <div class="column"></div>
-      <div class="column is-narrow">
-        <div class="box has-text-centered" style="width: fit-content;">
-          <div class="field">
-            <h1 class="title">PNG Extruder</h1>
-            <p>Upload a PNG, and get it back as an STL.</p>
+    <div class="fixed-grid has-4-cols">
+      <div class="grid m-4">
+        
+        <!-- File Picker Tile -->
+        <div class="tile box is-col-span-1 is-row-span-1 has-text-centered">
+          <div class="level">
+            <div class="level-left">
+              <button class="button is-info" id="button_new_image">Add Image</button>
+            </div>
+            <div class="level-right">
+              <button class="button is-danger" id="button_clear_images">Remove All</button>
+            </div>
           </div>
-          <div class="field is-flex-direction-row box level">
+          <hr class="mt-0 mb-1">
+          <div class="mt-1 mb-0" id="image_list_box" style="overflow-y:scroll;">
+
+          </div>
+        </div>
+
+        <!-- Basic Extruder -->
+        <div class="tile box is-col-span-1 is-row-span-2 is-flex-direction-column has-text-centered">
+          <h1 class="title">Basic Extruder</h1>
+          <div class="field box is-flex-direction-row level">
             <p style="width: 20%;">Width (X)<br>(in mm)</p>
             <input class="slider" step="2" min="2" max="200" id="slider_x" value="100" type="range" style="width: 50%;">
             <input class="input" type="text" placeholder="Size in mm" id="input_x" value="100" style="width: 20%;">
@@ -34,36 +48,141 @@
             <input class="slider" step="3.175" min="3.175" max="50.8" id="slider_z" value="6.35" type="range" style="width: 50%;">
             <input class="input" type="text" placeholder="Size in mm" id="input_z" value="6.35" style="width: 20%;">
           </div>
-          <div class="field columns">
-            <div class="column"></div>
-            <div class="column is-narrow">
-              <div class="box file is-boxed has-name">
-                <label class="file-label">
-                  <input class="file-input" type="file" name="resume" accept=".png" id="file_picker" />
-                  <span class="file-cta">
-                    <span class="file-label"> Choose a file… </span>
-                  </span>
-                  <span class="file-name" id="file_name" data-text="{0}">Filename</span>
-                </label>
-              </div>
-            </div>
-            <div class="column"></div>
-          </div>
-          <div class="field">
-            <div id="image_preview"></div>
+          <div class="field is-flex-direction-row box level">
+            <p title="The thickness of the black backing on the part" style="width: 20%;">Black Thickness</p>
+            <input class="slider" step="0.2" min="0.6" max="10" id="slider_black" value="3" type="range" style="width: 50%;">
+            <input class="input" type="text" placeholder="Size in mm" id="input_black" value="3" style="width: 20%;">
           </div>
           <div class="field">
             <button class="button is-success" id="button_stl">Extrude to STL</button>
           </div>
           <div class="field">
+            <button class="button is-success" id="button_3mf">Extrude to 3MF (MultiColour)</button>
+          </div>
+          <div class="field">
+            <p>Note: The colour <code>#FEFEFE</code> is the "transparent" colour</p>
+          </div>
+          <div class="field">
+            <button class="button is-success" id="button_3mf_black">Extrude to 3MF (MultiColour, Black Back)</button>
+          </div>
+          <div class="field">
             <button class="button is-success" id="button_svg">Convert to SVG</button>
           </div>
         </div>
+
+        <!-- DPI Calculator Tile -->
+        <div class="tile is-row-span-1 is-col-span-1">
+          <div class="box has-text-centered" style="width: fit-contnet;">
+            <div class="field">
+              <h1 class="title is-2">DPI Calculator</h1>
+            </div>
+            <div class="field is-flex-direction-row box level">
+              <p style="width: 30%;">Width (X)<br>(in px)</br></p>
+              <input class="input" type="number" placeholder="Size in px" id="dpi_calc_x" value="1000" style="width: 70%;">
+            </div>
+            <div class="field is-flex-direction-row box level">
+              <p style="width: 30%;">Height (Y)<br>(in px)</br></p>
+              <input class="input" type="number" placeholder="Size in px" id="dpi_calc_y" value="1000" style="width: 70%;">
+            </div>
+            <div class="field is-flex-direction-row box level">
+              <p style="width: 25%;">DPI<br>(in ppi)</br></p>
+              <input class="input" type="number" placeholder="dots per inch in pixels per inch" id="dpi_calc_dpi" value="300" style="width: 70%;">
+            </div>
+
+            <div class="field is-flex-direction-row box level">
+              <p style="width: 25%;">Result X<br>(in mm)</br></p>
+              <input class="input" disabled type="number" placeholder="Size in px" id="dpi_calc_out_x" value="84.6" style="width: 70%;">
+            </div>
+            <div class="field is-flex-direction-row box level">
+              <p style="width: 25%;">Result Y<br>(in mm)</br></p>
+              <input class="input" disabled type="number" placeholder="Size in px" id="dpi_calc_out_y" value="84.6" style="width: 70%;">
+            </div>
+            <div class="field">
+              <button class="button is-success" id="dpi_calc_fill_values" title="Assign these values to the extruder">Fill Values</button>
+            </div>
+          </div>
+        </div>
+        <!-- Colour Identifier -->
+        <div class="tile is-row-start-1 is-row-span-1 is-col-span-1">
+          <div class="box has-text-centered" style="width: fit-content;">
+            <div class="field">
+              <h1 class="title">Colour Identifier</h1>
+              <p>this uses the same filebox as the other stuff</p>
+            </div>
+            <div class="field">
+              <p id="colour_identifier_file" data-text="File: {0}">File: N/A.png</p>
+              <p id="colour_identifier_text" data-text="Found {0} Colours:">Found 0 Colours:</p>
+              <div class="box">
+                <p id="colour_identifier_p">hex / colourname</p>
+              </div>
+            </div>
+            <div class="field">
+              <button class="button is-success" id="button_find_colours">Find Colours</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Job queue tile-->
+        <div class="tile is-row-start-2 is-row-span-1 is-col-span-1">
+          <div class="box has-text-centered" style="width: 100%;">
+            <div class="field level">
+              <h1 class="title">Job Queue</h1>
+              <button class="button ml-3" id="button_refresh_current_jobs">↻</button>
+            </div>
+            <hr class="hr">
+            <div id="pending_jobs_div"></div>
+          </div>
+        </div>
+
+        <!-- Complete jobs tile-->
+        <div class="tile is-row-start-2 is-row-span-1 is-col-span-1">
+          <div class="box has-text-centered" style="width: 100%;">
+            <div class="field level">
+              <h1 class="title">Finished Jobs</h1>
+              <button class="button ml-3" id="button_refresh_finished_jobs">↻</button>
+            </div>
+            <hr class="hr">
+            <div id="finished_jobs_div"></div>
+          </div>
+        </div>
+
+        
+        <!-- Worker status tile-->
+        <div class="tile is-row-start-2 is-row-span-1 is-col-span-1">
+          <div class="box has-text-centered" style="width: 100%;">
+            <div class="field level">
+              <h1 class="title">Workers</h1>
+              <button class="button ml-3" id="button_refresh_worker_stats">↻</button>
+            </div>
+            <hr class="hr">
+            <div id="worker_stats_div"></div>
+          </div>
+        </div>
+        
+        <!-- Worker config tile-->
+        <div class="tile is-row-start-2 is-row-span-1 is-col-span-1">
+          <div class="box has-text-centered" style="width: fit-content;">
+            <h1 class="title">Worker Config</h1>
+            <hr class="hr">
+            <div class="box field level">
+              <p>Min</p>
+              <input class="input" type="number" id="worker_config_min" value="1">
+            </div>
+            <div class="box field level">
+              <p>Max</p>
+              <input class="input" type="number" id="worker_config_max" value="4">
+            </div>
+            <div class="box field level">
+              <p>Ratio</p>
+              <input class="input" type="number" id="worker_config_ratio" value="2">
+            </div>
+            <div class="field">
+              <button class="button is-info" id="worker_config_set">Set</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="column"></div>
     </div>
-    <div style="position:absolute;height:fit-content;bottom:0;width:100%;">
-      <div id="replace_with_footer"></div>
-    </div>
+    <div id="replace_with_footer"></div>
   </body>
 </html>

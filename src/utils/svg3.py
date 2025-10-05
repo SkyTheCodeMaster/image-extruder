@@ -1,10 +1,12 @@
 import asyncio
+import logging
 import random
 import string
 
 import aiofiles
 import aiofiles.os
 
+LOG = logging.getLogger(__name__)
 
 def make_job_id() -> str:
   pool: str = string.ascii_letters + string.digits
@@ -27,12 +29,12 @@ async def png_to_svg(png_data: bytes) -> str:
   convert_code = await convert_proc.wait()
 
   if convert_code != 0:
-    print((await convert_proc.stdout.read()).decode())
-    print((await convert_proc.stderr.read()).decode())
+    LOG.error((await convert_proc.stdout.read()).decode())
+    LOG.error((await convert_proc.stderr.read()).decode())
     raise RuntimeError("convert failure")
 
   potrace_proc = await asyncio.create_subprocess_shell(
-    f"potrace /tmp/extruder/{job_id}.pnm -s -o /tmp/extruder/{job_id}.svg",
+    f"potrace /tmp/extruder/{job_id}.pnm -n -s -o /tmp/extruder/{job_id}.svg",
     stderr=asyncio.subprocess.PIPE,
     stdout=asyncio.subprocess.PIPE,
   )

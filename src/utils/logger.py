@@ -1,26 +1,31 @@
 from __future__ import annotations
 
 import functools
+import logging
+import tomllib
 from ipaddress import ip_address
 from typing import TYPE_CHECKING
-import tomllib
 
 from aiohttp import hdrs, web
 from aiohttp.web_log import AccessLogger, KeyMethod
 
+from utils.pg_pool_middleware import DISABLED_LOG_PATHS
+
 if TYPE_CHECKING:
+  from ipaddress import IPv4Address, IPv6Address
   from typing import List, Tuple, Union
 
   from aiohttp.web import BaseRequest, StreamResponse
   from multidict import MultiMapping
+
   from utils.extra_request import Request
-  from ipaddress import IPv4Address, IPv6Address
 
   IPAddress = Union[IPv4Address, IPv6Address]
 
 with open("config.toml") as f:
   config = tomllib.loads(f.read())
   TRUSTED_PROXIES = config["srv"]["trusted_proxies"]
+
 
 def get_forwarded_for(headers: MultiMapping[str]) -> List[IPAddress]:
   forwarded_for: List[str] = headers.getall(hdrs.X_FORWARDED_FOR, [])
@@ -40,12 +45,14 @@ def get_forwarded_for(headers: MultiMapping[str]) -> List[IPAddress]:
       raise web.HTTPBadRequest(reason=f"Invalid {hdrs.X_FORWARDED_FOR} header")
   return valid_ips
 
+
 def get_origin_ip(request: Request) -> str:
   forwarded_for = get_forwarded_for(request.headers)
   if not forwarded_for:
     return request.remote
   first = forwarded_for[0]
   return str(first)
+
 
 class CustomWebLogger(AccessLogger):
   def compile_format(self, log_format: str) -> Tuple[str, List[KeyMethod]]:
@@ -96,3 +103,32 @@ class CustomWebLogger(AccessLogger):
     else:
       ip = request.remote
     return ip if ip is not None else "-"
+
+  def log(
+    self, request: BaseRequest, response: StreamResponse, time: float
+  ) -> None:
+    if not self.logger.isEnabledFor(logging.INFO):
+      # Avoid formatting the log line if it will not be emitted.
+      return
+    print(request.path)
+    if request.path in DISABLED_LOG_PATHS:
+      return
+    try:
+      fmt_info = self._format_line(request, response, time)
+
+      values = list()
+      extra = dict()
+      for key, value in fmt_info:
+        values.append(value)
+
+        if key.__class__ is str:
+          extra[key] = value
+        else:
+          k1, k2 = key  # type: ignore[misc]
+          dct = extra.get(k1, {})  # type: ignore[var-annotated,has-type]
+          dct[k2] = value  # type: ignore[index,has-type]
+          extra[k1] = dct  # type: ignore[has-type,assignment]
+
+      self.logger.info(self._log_format % tuple(values), extra=extra)
+    except Exception:
+      self.logger.exception("Error in logging")

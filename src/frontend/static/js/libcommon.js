@@ -1,6 +1,6 @@
 "use strict";
 
-// libcommon 1.1.0
+// libcommon 1.2.0
 
 import { Popup, show_popup } from "./libpopup.js";
 
@@ -687,4 +687,22 @@ export async function request(url, opts) {
   } else {
     return resp;
   }
+}
+
+export function disable_button(element) {
+  if (typeof(element) == "string") {
+    element = document.getElementById(element);
+  }
+
+  element.setAttribute("disabled", true);
+  element.classList.add("is-loading");
+}
+
+export function enable_button(element) {
+  if (typeof(element) == "string") {
+    element = document.getElementById(element);
+  }
+
+  element.removeAttribute("disabled");
+  element.classList.remove("is-loading");
 }

@@ -32,7 +32,7 @@ logging.basicConfig(
   handlers = handlers,
   format=LOGFMT,
   datefmt=LOGDATEFMT,
-  level=logging.INFO,
+  level=logging.WARNING,
 )
 
 coloredlogs.install(
@@ -46,13 +46,15 @@ app = web.Application(
   logger = CustomWebLogger(LOG),
   middlewares=[
     pg_pool_middleware
-  ]
+  ],
+  client_max_size=8192**2
 )
 api_app = web.Application(
   logger = CustomWebLogger(LOG),
   middlewares=[
     pg_pool_middleware
-  ]
+  ],
+  client_max_size=8192**2
 )
 
 async def startup():
@@ -88,7 +90,7 @@ async def startup():
       LOG.exception("Failed to load frontend!")
 
     # If we're running as the daemon, we dont need to serve.
-    runner = web.AppRunner(app)
+    runner = web.AppRunner(app, logger=CustomWebLogger(LOG))
     await runner.setup()
     site = web.TCPSite(
       runner,

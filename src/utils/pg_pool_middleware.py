@@ -9,6 +9,12 @@ from aiohttp.web import middleware
 if TYPE_CHECKING:
   from aiohttp.web import Request
 
+# Disable the "call to /whatever/ took x microseconds"
+DISABLED_LOG_PATHS = [
+  "/api/job/workers/",
+  "/api/job/complete/",
+  "/api/job/current/"
+]
 
 @middleware
 async def pg_pool_middleware(request: Request, handler):
@@ -19,9 +25,10 @@ async def pg_pool_middleware(request: Request, handler):
   except Exception:
     request.LOG.exception(f"Request to {request.path} failed!")
     resp = Response(status=500,body="internal server error")
-  request.LOG.info(
-    f"call to {request.path} took {(time.monotonic_ns()-start)/1000} microseconds"
-  )
+  if request.path not in DISABLED_LOG_PATHS:
+    request.LOG.info(
+      f"call to {request.path} took {(time.monotonic_ns()-start)/1000} microseconds"
+    )
   if resp is None:
     resp = Response(status=204)
   return resp

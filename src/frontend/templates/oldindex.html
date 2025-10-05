@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PNG Extruder</title>
+    <link rel="stylesheet" href="/css/vendored/bulma.min.css">
+    <link rel="stylesheet" href="/css/vendored/bulma-slider.min.css">
+    <script src="/js/oldindex.js" async type="module"></script>
+    <script src="/js/vendored/bulma-slider.js" async></script>
+  </head>
+  <body>
+    <script id="replace_with_navbar" src="/js/nav.js" type="module"></script>
+    <div class="columns m-6">
+      <div class="column"></div>
+      <div class="column is-narrow">
+        <div class="box has-text-centered" style="width: fit-contnet;">
+          <div class="field">
+            <h1 class="title is-2">DPI Calculator</h1>
+          </div>
+          <div class="field is-flex-direction-row box level">
+            <p style="width: 30%;">Width (X)<br>(in px)</br></p>
+            <input class="input" type="number" placeholder="Size in px" id="dpi_calc_x" value="1000" style="width: 70%;">
+          </div>
+          <div class="field is-flex-direction-row box level">
+            <p style="width: 30%;">Height (Y)<br>(in px)</br></p>
+            <input class="input" type="number" placeholder="Size in px" id="dpi_calc_y" value="1000" style="width: 70%;">
+          </div>
+          <div class="field is-flex-direction-row box level">
+            <p style="width: 25%;">DPI<br>(in ppi)</br></p>
+            <input class="input" type="number" placeholder="dots per inch in pixels per inch" id="dpi_calc_dpi" value="300" style="width: 70%;">
+          </div>
+
+          <div class="field is-flex-direction-row box level">
+            <p style="width: 25%;">Result X<br>(in mm)</br></p>
+            <input class="input" disabled type="number" placeholder="Size in px" id="dpi_calc_out_x" value="84.6" style="width: 70%;">
+          </div>
+          <div class="field is-flex-direction-row box level">
+            <p style="width: 25%;">Result Y<br>(in mm)</br></p>
+            <input class="input" disabled type="number" placeholder="Size in px" id="dpi_calc_out_y" value="84.6" style="width: 70%;">
+          </div>
+          <div class="field">
+            <button class="button is-success" id="dpi_calc_fill_values" title="Assign these values to the extruder">Fill Values</button>
+          </div>
+        </div>
+      </div>
+      <div class="column is-narrow">
+        <div class="box has-text-centered" style="width: fit-content;">
+          <div class="field">
+            <h1 class="title">PNG Extruder</h1>
+            <p>Upload a PNG, and get it back as an STL.</p>
+          </div>
+          <div class="field is-flex-direction-row box level">
+            <p style="width: 20%;">Width (X)<br>(in mm)</p>
+            <input class="slider" step="2" min="2" max="200" id="slider_x" value="100" type="range" style="width: 50%;">
+            <input class="input" type="text" placeholder="Size in mm" id="input_x" value="100" style="width: 20%;">
+          </div>
+          <div class="field is-flex-direction-row box level">
+            <p style="width: 20%;">Length (Y)<br>(in mm)</p>
+            <input class="slider" step="2" min="2" max="200" id="slider_y" value="100" type="range" style="width: 50%;">
+            <input class="input" type="text" placeholder="Size in mm" id="input_y" value="100" style="width: 20%;">
+          </div>
+          <div class="field is-flex-direction-row box level">
+            <p style="width: 20%;">Height (Z)<br>(in mm)</p>
+            <input class="slider" step="3.175" min="3.175" max="50.8" id="slider_z" value="6.35" type="range" style="width: 50%;">
+            <input class="input" type="text" placeholder="Size in mm" id="input_z" value="6.35" style="width: 20%;">
+          </div>
+          <div class="field columns">
+            <div class="column"></div>
+            <div class="column is-narrow">
+              <div class="box file is-boxed has-name">
+                <label class="file-label">
+                  <input class="file-input" type="file" name="resume" accept=".png" id="file_picker" />
+                  <span class="file-cta">
+                    <span class="file-label"> Choose a file… </span>
+                  </span>
+                  <span class="file-name" id="file_name" data-text="{0}">Filename</span>
+                </label>
+              </div>
+            </div>
+            <div class="column"></div>
+          </div>
+          <div class="field">
+            <div id="image_preview"></div>
+          </div>
+          <div class="field">
+            <button class="button is-success" id="button_stl">Extrude to STL</button>
+          </div>
+          <div class="field">
+            <button class="button is-success" id="button_3mf">Extrude to 3MF (MultiColour)</button>
+          </div>
+          <div class="field">
+            <p>Note: The colour <code>#FEFEFE</code> is the "transparent" colour</p>
+          </div>
+          <div class="field">
+            <button class="button is-success" id="button_svg">Convert to SVG</button>
+          </div>
+        </div>
+      </div>
+      <div class="column is-narrow">
+        <div class="box has-text-centered" style="width: fit-content;">
+          <div class="field">
+            <h1 class="title">Colour Identifier</h1>
+            <p>this uses the same filebox as the other stuff</p>
+          </div>
+          <div class="field">
+            <p id="colour_identifier_text" data-text="Found {0} Colours:">Found 0 Colours:</p>
+            <div class="box">
+              <code><p id="colour_identifier_p">
+                hex / colourname
+              </p></code>
+            </div>
+          </div>
+          <div class="field">
+            <button class="button is-success" id="button_find_colours">Find Colours</button>
+          </div>
+        </div>
+      </div>
+      <div class="column"></div>
+    </div>
+    <div style="position:absolute;height:fit-content;bottom:0;width:100%;">
+      <div id="replace_with_footer"></div>
+    </div>
+  </body>
+</html>

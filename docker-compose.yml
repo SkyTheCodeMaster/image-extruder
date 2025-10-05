@@ -1,0 +1,12 @@
+services:
+  inventory_manager:
+    container_name: print-inventory
+    image: ghcr.io/skythecodemaster/print-inventory:latest
+    restart: unless-stopped
+    ports:
+      - 8432:8432
+    volumes:
+      - /path/to/config/:/app/config/ # Your config file, example @ /src/config.example.toml
+    environment:
+      - PYTHONUNBUFFERED=1
+networks: {}
