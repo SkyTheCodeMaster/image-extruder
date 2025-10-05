@@ -219,7 +219,7 @@ module combined_model() {
 """
   
   for model in models:
-    script += f"part_{model["colour"]}();\n"
+    script += f"part_{model['colour']}();\n"
   
   script += """}
 
