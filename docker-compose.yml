@@ -1,7 +1,7 @@
 services:
-  inventory_manager:
-    container_name: print-inventory
-    image: ghcr.io/skythecodemaster/print-inventory:latest
+  image-extruder:
+    container_name: image-extruder
+    image: ghcr.io/skythecodemaster/image-extruder:latest
     restart: unless-stopped
     ports:
       - 8432:8432
