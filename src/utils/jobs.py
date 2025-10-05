@@ -216,7 +216,7 @@ async def job_consumer(worker_id: int):
     else:
       converter = converters[job["type"]]
       try:
-        workers[worker_id]["status"] = f"{job['type']} / {job["meta"]["filename"]}"
+        workers[worker_id]["status"] = f"{job['type']} / {job['meta']['filename']}"
       except Exception:
         workers[worker_id]["status"] = f"{job['type']} / unknown filename"
       result = await converter(job)
